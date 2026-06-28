@@ -1,33 +1,19 @@
-#EXTM3U
-#EXTINF:0,B92
-http://edge1.volim.tv/live/b92.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
-#EXTINF:0,HAPPY
-http://edge1.volim.tv/live/happy.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
-#EXTINF:0,HRT 1
-http://edge1.volim.tv/live/hrt_1.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
-#EXTINF:0,HRT 2
-http://edge1.volim.tv/live/hrt_2.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
-#EXTINF:0,KANAL 3
-http://edge1.volim.tv/live/kanal_3.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
-#EXTINF:0,SKY PLUS
-http://edge1.volim.tv/live/sky_plus.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
-#EXTINF:0,PALMA PLUS
-http://edge1.volim.tv/live/palma.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
-#EXTINF:0,PINK
-http://edge1.volim.tv/live/pink.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
-#EXTINF:0,PRVA TV
-http://edge1.volim.tv/live/prva.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
-#EXTINF:0,RTCG SAT
-http://edge1.volim.tv/live/rtcg.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
-#EXTINF:0,RTRS
-http://edge1.volim.tv/live/rtrs.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
-#EXTINF:0,RTS 1
-http://edge1.volim.tv/live/rts_1.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
-#EXTINF:0,RTS 2
-http://edge1.volim.tv/live/rts_2.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
-#EXTINF:0,RTV 1
-http://edge1.volim.tv/live/rtv_1.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
-#EXTINF:0,SOS
-http://edge1.volim.tv1/live/sos.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
-#EXTINF:0,STUDIO B
-http://edge1.volim.tv/live/studio_b.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
+<h1>Serbia</h1>
+
+| #   | Channel        | Link  | Logo | EPG id |
+|:---:|:--------------:|:-----:|:----:|:------:|
+| 1 | RTS 1 | [>](https://webtvstream.bhtelecom.ba/rts1.m3u8) | <img height="20" src="https://i.imgur.com/S1pKHSR.png"/> | RTS1.rs |
+| 2 | RTS 2 | [>](https://webtvstream.bhtelecom.ba/rts2.m3u8) | <img height="20" src="https://i.imgur.com/jltAf5h.png"/> | RTS2.rs |
+| 3 | RTS 3 | [x]() | <img height="20" src="https://i.imgur.com/gxuGB4J.png"/> | RTS3.rs |
+| 4 | Red TV | [>](https://edge8.pink.rs/redtv/chunklist_w1213385221.m3u8) | <img height="20" src="https://i.imgur.com/cpN7NrL.png"/> | RedTV.rs |
+| 5 | Kurir TV | [>](https://static.am.mediaoutcast.com/storage/nQJnjJkO/nQJnjJkO/stream/O68x4o8g/720p/720p.m3u8) | <img height="20" src="https://i.imgur.com/HBPnUD5.png"/> | KurirTV.rs |
+| 6 | Informer TV | [>](https://edge-rs-03.maksnet.tv/informertv-secure/web/playlist.m3u8) | <img height="20" src="https://i.imgur.com/9wdEHRf.png"/> | InformerTV.rs |
+| 0 | RTS Svet | [x]() | <img height="20" src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Rts-svet.png"/> | RTSSvet.rs |
+| 0 | Euronews Serbia | [x](https://d1ei8ofhgfmkac.cloudfront.net/app-19518-1306/ngrp:QoZfNjsg_all/playlist.m3u8) | <img height="20" src="https://i.imgur.com/b24QKcq.png"/> | EuroNewsSerbia.rs |
+
+<h3>Vojvodina</h3>
+
+| #   | Channel        | Link  | Logo | EPG id |
+|:---:|:--------------:|:-----:|:----:|:------:|
+| 1   | RTV 1 | [>](rtmp://212.200.230.50:1935/RTV/rtv1) | <img height="20" src="https://i.imgur.com/CG44YT3.png"/> | RTV1.rs |
+| 2   | RTV 2 | [>](rtmp://212.200.230.50:1935/RTV/rtv2) | <img height="20" src="https://i.imgur.com/skpr66t.png"/> | RTV2.rs |
