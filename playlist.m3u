@@ -1,5 +1,6 @@
 #EXTM3U
 
+# --- OLD CHANNELS ---
 #EXTINF:-1 group-title="Serbia",RTS 1
 https://webtvstream.bhtelecom.ba/rts1.m3u8
 
@@ -15,5 +16,29 @@ https://static.am.mediaoutcast.com/storage/nQJnjJkO/nQJnjJkO/stream/O68x4o8g/720
 #EXTINF:-1 group-title="Serbia",INFORMER TV
 https://edge-rs-03.maksnet.tv/informertv-secure/web/playlist.m3u8
 
-#EXTINF:-1 group-title="Europe",EURONEWS (Serbia)
+#EXTINF:-1 group-title="Europe",EURONEWS Serbia
 https://d1ei8ofhgfmkac.cloudfront.net/app-19518-1306/ngrp:QoZfNjsg_all/playlist.m3u8
+
+
+# --- NEW CHANNELS ---
+
+#EXTINF:-1 group-title="Serbia",24 Kitchen Serbia
+https://list.iptvcat.com/my_list/s/264411bee136b996f91d6c21c8773022.m3u8
+
+#EXTINF:-1 group-title="Serbia",DM Sat
+https://list.iptvcat.com/my_list/s/67aa4df13bb0ce2d28e963e857ac086e.m3u8
+
+#EXTINF:-1 group-title="Sports",Extreme Sports
+https://list.iptvcat.com/my_list/s/6f6856f5a20cc243bc997d96ee903b6a.m3u8
+
+#EXTINF:-1 group-title="Music/Local",Narodna TV
+https://list.iptvcat.com/my_list/s/cc4653be30e2b66eb9816d545cbc2415.m3u8
+
+#EXTINF:-1 group-title="Serbia",N1 RS
+https://list.iptvcat.com/my_list/s/ba1744278793e14ef7e93f84ac9234d5.m3u8
+
+#EXTINF:-1 group-title="Serbia",PINK
+https://list.iptvcat.com/my_list/s/67f28214a2dc37c75036a21a1d11e477.m3u8
+
+#EXTINF:-1 group-title="News",RTS Svet
+https://list.iptvcat.com/my_list/s/91208382c2476caa5ffa1631635026cf.m3u8
