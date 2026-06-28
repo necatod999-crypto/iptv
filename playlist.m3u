@@ -1,0 +1,19 @@
+#EXTM3U
+
+#EXTINF:-1 group-title="Serbia",RTS 1
+https://webtvstream.bhtelecom.ba/rts1.m3u8
+
+#EXTINF:-1 group-title="Serbia",RTS 2
+https://webtvstream.bhtelecom.ba/rts2.m3u8
+
+#EXTINF:-1 group-title="Serbia",RED TV
+https://edge8.pink.rs/redtv/chunklist_w1213385221.m3u8
+
+#EXTINF:-1 group-title="Serbia",KURIR TV
+https://static.am.mediaoutcast.com/storage/nQJnjJkO/nQJnjJkO/stream/O68x4o8g/720p/720p.m3u8
+
+#EXTINF:-1 group-title="Serbia",INFORMER TV
+https://edge-rs-03.maksnet.tv/informertv-secure/web/playlist.m3u8
+
+#EXTINF:-1 group-title="Europe",EURONEWS (Serbia)
+https://d1ei8ofhgfmkac.cloudfront.net/app-19518-1306/ngrp:QoZfNjsg_all/playlist.m3u8
