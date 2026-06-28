@@ -1,67 +1,33 @@
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97089
-#EXTINF:-1 ,RS: RTS SVET
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97090
-#EXTINF:-1 ,RS: RTS 1 FHD
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97091
-#EXTINF:-1 ,RS: RTS 1
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97092
-#EXTINF:-1 ,RS: RTS 2
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97093
-#EXTINF:-1 ,RS: RTS 3
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97094
-#EXTINF:-1 ,RS: PRVA HD
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97095
-#EXTINF:-1 ,RS: PRVA
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97096
-#EXTINF:-1 ,RS: PRVA PLUS
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97097
-#EXTINF:-1 ,RS: PRVA WORLD
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97098
-#EXTINF:-1 ,RS: PRVA MAX
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97099
-#EXTINF:-1 ,RS: PRVA KICK
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97101
-#EXTINF:-1 ,RS: PRVA FILES TEST
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97102
-#EXTINF:-1 ,RS: N1 SRBIJA
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97103
-#EXTINF:-1 ,RS: HAPPY TV
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97104
-#EXTINF:-1 ,RS: HAPPY TV PAROVI LIVE
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97105
-#EXTINF:-1 ,RS: ZADRUGA UZIVO 1
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97106
-#EXTINF:-1 ,RS: ZADRUGA UZIVO 2
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97107
-#EXTINF:-1 ,RS: ZADRUGA UZIVO 3
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97108
-#EXTINF:-1 ,RS: NOVA S
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97109
-#EXTINF:-1 ,RS: RTS ZIVOT
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97110
-#EXTINF:-1 ,RS: RTS MUZIKA
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97112
-#EXTINF:-1 ,RS: RTS KOLO
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97113
-#EXTINF:-1 ,RS: RTS DRAMA
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97114
-#EXTINF:-1 ,RS: RTS POLETARAC
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97115
-#EXTINF:-1 ,RS: SANDZAK TV
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97116
-#EXTINF:-1 ,RS: NOVI PAZAR
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97118
-#EXTINF:-1 ,RS: MLAVA TV
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97119
-#EXTINF:-1 ,RS: BELLE AMIE
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97120
-#EXTINF:-1 ,RS: NOVA M
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97121
-#EXTINF:-1 ,RS: KCN 2
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97122
-#EXTINF:-1 ,RS: KCN 1
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97123
-#EXTINF:-1 ,RS: PALMA PLUS
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97124
-#EXTINF:-1 ,RS: RTK
-http://sansat.net:88/sonewhrab/jgjdh3767DJSHBNdghsSDJ236/97125
+#EXTM3U
+#EXTINF:0,B92
+http://edge1.volim.tv/live/b92.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
+#EXTINF:0,HAPPY
+http://edge1.volim.tv/live/happy.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
+#EXTINF:0,HRT 1
+http://edge1.volim.tv/live/hrt_1.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
+#EXTINF:0,HRT 2
+http://edge1.volim.tv/live/hrt_2.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
+#EXTINF:0,KANAL 3
+http://edge1.volim.tv/live/kanal_3.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
+#EXTINF:0,SKY PLUS
+http://edge1.volim.tv/live/sky_plus.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
+#EXTINF:0,PALMA PLUS
+http://edge1.volim.tv/live/palma.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
+#EXTINF:0,PINK
+http://edge1.volim.tv/live/pink.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
+#EXTINF:0,PRVA TV
+http://edge1.volim.tv/live/prva.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
+#EXTINF:0,RTCG SAT
+http://edge1.volim.tv/live/rtcg.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
+#EXTINF:0,RTRS
+http://edge1.volim.tv/live/rtrs.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
+#EXTINF:0,RTS 1
+http://edge1.volim.tv/live/rts_1.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
+#EXTINF:0,RTS 2
+http://edge1.volim.tv/live/rts_2.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
+#EXTINF:0,RTV 1
+http://edge1.volim.tv/live/rtv_1.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
+#EXTINF:0,SOS
+http://edge1.volim.tv1/live/sos.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
+#EXTINF:0,STUDIO B
+http://edge1.volim.tv/live/studio_b.stream/playlist.m3u8?hash=49c26f175dcc3d897eef6ae7f4f321106f09fe39
