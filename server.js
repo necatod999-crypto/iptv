@@ -10,6 +10,8 @@ const APP_SECRET = process.env.APP_SECRET || '';
 const BASE_URL = (process.env.PUBLIC_BASE_URL || '').replace(/\/$/, '');
 const MOVE_UID = (process.env.MOVE_UID || '').trim();
 const MAX_ACTIVE_STREAMS = Math.max(1, Number(process.env.MAX_ACTIVE_STREAMS || 2));
+const DEBUG_ACCESS_TOKEN = (process.env.DEBUG_ACCESS_TOKEN || '').trim();
+
 if (APP_SECRET.length < 24) throw new Error('APP_SECRET must be at least 24 characters');
 
 const MOVE_API = 'https://api2.mts-si.tv';
@@ -26,6 +28,7 @@ function enc(obj) {
 }
 function dec(token) {
   const b = Buffer.from(token, 'base64url');
+  if (b.length < 29) throw new Error('Invalid token');
   const iv = b.subarray(0, 12), tag = b.subarray(12, 28), body = b.subarray(28);
   const d = crypto.createDecipheriv('aes-256-gcm', KEY, iv);
   d.setAuthTag(tag);
@@ -39,7 +42,7 @@ function stableUid(username) {
   const h = b.toString('hex');
   return `${h.slice(0,8)}-${h.slice(8,12)}-${h.slice(12,16)}-${h.slice(16,20)}-${h.slice(20)}`;
 }
-function headers(extra = {}) {
+function apiHeaders(extra = {}) {
   return {
     accept: 'application/json, text/plain, */*',
     'accept-language': 'en-US,en;q=0.9',
@@ -58,7 +61,7 @@ function headers(extra = {}) {
 async function post(path, payload, auth) {
   const r = await fetch(MOVE_API + path, {
     method: 'POST',
-    headers: headers(auth ? { 'x-auth-token': auth } : {}),
+    headers: apiHeaders(auth ? { 'x-auth-token': auth } : {}),
     body: JSON.stringify(payload)
   });
   const txt = await r.text();
@@ -83,7 +86,12 @@ async function login(creds) {
     appVersion: '3.4.8',
     uid
   });
-  const profileId = data.profile?.id || data.masterProfile?.id || data.master_profile?.id || data.customer_profile_id || data.profile_id;
+  const profileId =
+    data.profile?.id ||
+    data.masterProfile?.id ||
+    data.master_profile?.id ||
+    data.customer_profile_id ||
+    data.profile_id;
   return {
     auth: data.auth_token,
     customerId: data.customer_id,
@@ -92,95 +100,237 @@ async function login(creds) {
     uid
   };
 }
-
-function primitiveText(v) {
-  if (v == null) return '';
-  if (typeof v === 'string' || typeof v === 'number') return String(v).trim();
-  if (Array.isArray(v)) {
-    for (const x of v) {
-      const t = primitiveText(x);
-      if (t) return t;
-    }
-    return '';
-  }
-  if (typeof v === 'object') {
-    for (const k of ['name','title','value','text','label','translation','displayName','display_name']) {
-      if (v[k] != null) {
-        const t = primitiveText(v[k]);
-        if (t) return t;
-      }
-    }
-    for (const x of Object.values(v)) {
-      const t = primitiveText(x);
-      if (t) return t;
-    }
-  }
-  return '';
-}
-function num(v) {
-  if (v == null) return 0;
-  if (typeof v === 'number') return Number.isFinite(v) ? v : 0;
-  const n = Number(String(v).trim());
-  return Number.isFinite(n) ? n : 0;
-}
-function collectObjects(v, depth = 0, out = []) {
-  if (depth > 9 || v == null || out.length > 20000) return out;
-  if (Array.isArray(v)) {
-    for (const x of v) collectObjects(x, depth + 1, out);
-  } else if (typeof v === 'object') {
-    out.push(v);
-    for (const x of Object.values(v)) collectObjects(x, depth + 1, out);
-  }
-  return out;
-}
-function pickDirect(o, names) {
-  for (const n of names) if (o && Object.prototype.hasOwnProperty.call(o, n) && o[n] != null) return o[n];
-}
-function parseChannels(data) {
-  const objects = collectObjects(data);
-  const idKeys = ['liveId','live_id','id','contentId','content_id','channelId','channel_id','assetId','asset_id','programId','program_id'];
-  const nameKeys = ['name','title','channelName','channel_name','displayName','display_name','originalTitle','original_title','shortName','short_name','label'];
-  const logoKeys = ['logo','icon','logoUrl','logo_url','imageUrl','image_url','thumbnail','thumb'];
-  const catKeys = ['categoryName','category_name','category','genreName','genre_name','groupName','group_name'];
-  const found = new Map();
-
-  for (const o of objects) {
-    const id = num(pickDirect(o, idKeys));
-    if (!id) continue;
-
-    let name = primitiveText(pickDirect(o, nameKeys));
-    if (!name) {
-      name = primitiveText(pickDirect(o, ['translations','translation','translate','localized','localization','metadata']));
-    }
-    if (!name || /^https?:\/\//i.test(name)) continue;
-
-    const pic = pickDirect(o, ['picture','pictures','images','image','artwork']) || {};
-    const logo = primitiveText(pickDirect(o, logoKeys)) || primitiveText(pickDirect(pic, logoKeys));
-    const category = primitiveText(pickDirect(o, catKeys)) || 'MOVE';
-
-    if (!found.has(id)) found.set(id, { id, name, logo, category });
-    else {
-      const old = found.get(id);
-      if ((!old.logo || old.logo === '[object Object]') && logo) old.logo = logo;
-      if ((!old.category || old.category === 'MOVE') && category) old.category = category;
-      if ((!old.name || old.name.length < name.length) && name.length < 150) old.name = name;
-    }
-  }
-
-  const rows = [...found.values()].filter(x => x.id > 0 && x.name && x.name !== '[object Object]');
-  console.log('MOVE live/all parsed', JSON.stringify({ topKeys: data && typeof data === 'object' ? Object.keys(data).slice(0,30) : [], objects: objects.length, channels: rows.length }));
-  return rows;
-}
-async function channelsFor(creds) {
+async function liveAll(creds) {
   const s = await login(creds);
-  if (!s.profileId) throw new Error('MOVE profile ID nije pronadjen u login odgovoru');
+  if (!s.profileId) throw new Error('MOVE profile ID nije pronadjen');
   const data = await post('/api/v2/content/live/all', {
     customerId: s.customerId,
     customerProfileId: s.profileId,
     lang: 1
   }, s.auth);
-  return { s, channels: parseChannels(data) };
+  return { s, data };
 }
+
+const ID_KEYS = [
+  'liveId','liveID','live_id','live',
+  'id','ID','contentId','contentID','content_id',
+  'channelId','channelID','channel_id','channel',
+  'assetId','assetID','asset_id','programId','program_id',
+  'cid','content','pk'
+];
+const NAME_KEYS = [
+  'name','title','channelName','channel_name','displayName','display_name',
+  'originalTitle','original_title','shortName','short_name','label',
+  'caption','text','description'
+];
+const LOGO_KEYS = ['logo','icon','logoUrl','logo_url','imageUrl','image_url','thumbnail','thumb','poster'];
+const CAT_KEYS = ['categoryName','category_name','category','genreName','genre_name','groupName','group_name','genre'];
+
+function numeric(v) {
+  if (typeof v === 'number' && Number.isFinite(v)) return Math.trunc(v);
+  if (typeof v === 'string' && /^\d{1,12}$/.test(v.trim())) return Number(v.trim());
+  return 0;
+}
+function simpleText(v) {
+  if (v == null) return '';
+  if (typeof v === 'string') return v.trim();
+  if (typeof v === 'number') return String(v);
+  return '';
+}
+function directByKeys(o, keys) {
+  if (!o || typeof o !== 'object' || Array.isArray(o)) return undefined;
+  for (const k of keys) if (Object.prototype.hasOwnProperty.call(o, k) && o[k] != null) return o[k];
+}
+function deepFirst(o, keys, depth = 0, seen = new Set()) {
+  if (depth > 5 || o == null || typeof o !== 'object' || seen.has(o)) return undefined;
+  seen.add(o);
+  if (!Array.isArray(o)) {
+    const d = directByKeys(o, keys);
+    if (d != null) return d;
+  }
+  const vals = Array.isArray(o) ? o : Object.values(o);
+  for (const v of vals) {
+    if (v && typeof v === 'object') {
+      const x = deepFirst(v, keys, depth + 1, seen);
+      if (x != null) return x;
+    }
+  }
+}
+function deepText(o, keys, depth = 0, seen = new Set()) {
+  if (depth > 6 || o == null || typeof o !== 'object' || seen.has(o)) return '';
+  seen.add(o);
+  if (!Array.isArray(o)) {
+    for (const k of keys) {
+      if (Object.prototype.hasOwnProperty.call(o, k)) {
+        const v = o[k];
+        const t = simpleText(v);
+        if (t && t.length <= 180 && !/^https?:\/\//i.test(t)) return t;
+        if (v && typeof v === 'object') {
+          const nested = deepText(v, keys, depth + 1, seen);
+          if (nested) return nested;
+        }
+      }
+    }
+  }
+  const vals = Array.isArray(o) ? o : Object.values(o);
+  for (const v of vals) {
+    if (v && typeof v === 'object') {
+      const t = deepText(v, keys, depth + 1, seen);
+      if (t) return t;
+    }
+  }
+  return '';
+}
+function deepUrl(o, keys, depth = 0, seen = new Set()) {
+  if (depth > 5 || o == null || typeof o !== 'object' || seen.has(o)) return '';
+  seen.add(o);
+  if (!Array.isArray(o)) {
+    for (const k of keys) {
+      if (Object.prototype.hasOwnProperty.call(o, k)) {
+        const v = o[k];
+        if (typeof v === 'string' && /^https?:\/\//i.test(v)) return v;
+      }
+    }
+  }
+  const vals = Array.isArray(o) ? o : Object.values(o);
+  for (const v of vals) {
+    if (v && typeof v === 'object') {
+      const u = deepUrl(v, keys, depth + 1, seen);
+      if (u) return u;
+    }
+  }
+  return '';
+}
+
+function schemaSummary(data) {
+  try {
+    const keyFreq = new Map();
+    const sigFreq = new Map();
+    const arrays = [];
+    const numericParents = [];
+    let objects = 0;
+
+    function walk(v, path = '$', depth = 0) {
+      if (depth > 8 || v == null) return;
+      if (Array.isArray(v)) {
+        if (arrays.length < 20) {
+          const firstObj = v.find(x => x && typeof x === 'object' && !Array.isArray(x));
+          arrays.push({
+            path,
+            len: v.length,
+            firstKeys: firstObj ? Object.keys(firstObj).slice(0,30) : []
+          });
+        }
+        for (let i = 0; i < Math.min(v.length, 80); i++) walk(v[i], `${path}[]`, depth + 1);
+        return;
+      }
+      if (typeof v !== 'object') return;
+      objects++;
+      const keys = Object.keys(v);
+      for (const k of keys) keyFreq.set(k, (keyFreq.get(k) || 0) + 1);
+      const sig = keys.slice().sort().join(',');
+      sigFreq.set(sig, (sigFreq.get(sig) || 0) + 1);
+      for (const [k, child] of Object.entries(v)) {
+        if (/^\d{2,12}$/.test(k) && child && typeof child === 'object' && numericParents.length < 20) {
+          numericParents.push({ path: `${path}.${k}`, keys: Array.isArray(child) ? ['<array>'] : Object.keys(child).slice(0,30) });
+        }
+        walk(child, `${path}.${k}`, depth + 1);
+      }
+    }
+    walk(data);
+    const content = data?.content;
+    const summary = {
+      topKeys: data && typeof data === 'object' ? Object.keys(data) : [],
+      contentType: Array.isArray(content) ? 'array' : typeof content,
+      contentLen: Array.isArray(content) ? content.length : undefined,
+      contentKeys: content && !Array.isArray(content) && typeof content === 'object' ? Object.keys(content).slice(0,60) : [],
+      objects,
+      topObjectKeys: [...keyFreq.entries()].sort((a,b)=>b[1]-a[1]).slice(0,60),
+      signatures: [...sigFreq.entries()].sort((a,b)=>b[1]-a[1]).slice(0,25),
+      arrays,
+      numericParents
+    };
+    console.log('MOVE_SCHEMA', JSON.stringify(summary));
+  } catch (e) {
+    console.log('MOVE_SCHEMA_ERROR', e.message);
+  }
+}
+
+function parseChannels(data) {
+  const found = new Map();
+
+  function addCandidate(obj, idHint = 0, categoryHint = 'MOVE') {
+    if (!obj || typeof obj !== 'object') return;
+    let id = numeric(directByKeys(obj, ID_KEYS));
+    if (!id) {
+      const deepId = deepFirst(obj, ID_KEYS);
+      id = numeric(deepId);
+    }
+    if (!id) id = numeric(idHint);
+    if (!id) return;
+
+    let name = '';
+    const directName = directByKeys(obj, NAME_KEYS);
+    if (typeof directName === 'string' || typeof directName === 'number') name = simpleText(directName);
+    if (!name) name = deepText(obj, NAME_KEYS);
+    if (!name || /^\d+$/.test(name) || /^https?:\/\//i.test(name)) return;
+
+    let category = simpleText(directByKeys(obj, CAT_KEYS)) || categoryHint || 'MOVE';
+    if (!category || /^https?:\/\//i.test(category)) category = 'MOVE';
+    const logo = deepUrl(obj, LOGO_KEYS);
+
+    const old = found.get(id);
+    if (!old) found.set(id, { id, name, logo, category });
+    else {
+      if (name && (!old.name || old.name.length < 2)) old.name = name;
+      if (logo && !old.logo) old.logo = logo;
+      if (category && old.category === 'MOVE') old.category = category;
+    }
+  }
+
+  function walk(v, pathKey = '', categoryHint = 'MOVE', depth = 0) {
+    if (depth > 9 || v == null) return;
+    if (Array.isArray(v)) {
+      for (const x of v) {
+        if (x && typeof x === 'object') addCandidate(x, 0, categoryHint);
+        walk(x, '', categoryHint, depth + 1);
+      }
+      return;
+    }
+    if (typeof v !== 'object') return;
+
+    const numericKeyHint = numeric(pathKey);
+    addCandidate(v, numericKeyHint, categoryHint);
+
+    let nextCategory = categoryHint;
+    const cat = simpleText(directByKeys(v, CAT_KEYS));
+    if (cat && cat.length < 100) nextCategory = cat;
+
+    for (const [k, child] of Object.entries(v)) {
+      if (child && typeof child === 'object') {
+        if (/^\d{1,12}$/.test(k)) addCandidate(child, Number(k), nextCategory);
+        walk(child, k, nextCategory, depth + 1);
+      }
+    }
+  }
+
+  walk(data?.content ?? data);
+  if (found.size === 0 && data?.content !== data) walk(data);
+
+  const rows = [...found.values()].filter(x => x.id > 0 && x.name).sort((a,b)=>a.id-b.id);
+  console.log('MOVE live/all parsed', JSON.stringify({
+    topKeys: data && typeof data === 'object' ? Object.keys(data).slice(0,30) : [],
+    channels: rows.length
+  }));
+  if (!rows.length) schemaSummary(data);
+  return rows;
+}
+
+async function channelsFor(creds) {
+  const { s, data } = await liveAll(creds);
+  return { s, channels: parseChannels(data), raw: data };
+}
+
 async function sourceFor(creds, liveId, force = false) {
   const key = `${String(creds.username).toLowerCase()}:${Number(liveId)}`;
   const cached = sourceCache.get(key);
@@ -198,14 +348,13 @@ async function sourceFor(creds, liveId, force = false) {
   const value = {
     url: data.content_url,
     headerName: data?.protection?.headerName,
-    headerValue: data?.protection?.headerValue || data?.protection?.value,
-    encryption: data?.encryption || null,
-    mediaInfo: data?.urlMediaInfo || null
+    headerValue: data?.protection?.headerValue || data?.protection?.value
   };
   if (!value.url) throw new Error('MOVE nije vratio content_url');
   sourceCache.set(key, { at: Date.now(), value });
   return value;
 }
+
 function sourceHeaders(src, req = null) {
   const h = {
     accept: '*/*',
@@ -217,13 +366,10 @@ function sourceHeaders(src, req = null) {
   if (req?.headers?.range) h.range = req.headers.range;
   return h;
 }
-function streamKey(token, id) {
-  return crypto.createHash('sha256').update(`${token}:${id}`).digest('hex');
-}
 function allowStream(token, id) {
   const now = Date.now();
   for (const [k, t] of activeStreams) if (now - t > 30000) activeStreams.delete(k);
-  const key = streamKey(token, id);
+  const key = crypto.createHash('sha256').update(`${token}:${id}`).digest('hex');
   if (!activeStreams.has(key) && activeStreams.size >= MAX_ACTIVE_STREAMS) return false;
   activeStreams.set(key, now);
   return true;
@@ -238,7 +384,7 @@ function publicBase(req) {
   return BASE_URL || `${req.protocol}://${req.get('host')}`;
 }
 
-app.get('/', (_req, res) => res.send(page(`<div class=card><h2>MOVE login</h2><form method=post action=/login><p><input name=username placeholder='MOVE username' autocomplete=username required></p><p><input name=password type=password placeholder='MOVE password' autocomplete=current-password required></p><button>Prijavi se i ucitaj kanale</button></form><p>Posle prijave dobijas pravi M3U fajl. Sam server dodaje potreban MOVE playback header za kanale bez DRM-a.</p></div>`)));
+app.get('/', (_req, res) => res.send(page(`<div class=card><h2>MOVE login</h2><form method=post action=/login><p><input name=username placeholder='MOVE username' autocomplete=username required></p><p><input name=password type=password placeholder='MOVE password' autocomplete=current-password required></p><button>Prijavi se i ucitaj kanale</button></form></div>`)));
 
 app.post('/login', async (req, res) => {
   try {
@@ -249,7 +395,7 @@ app.post('/login', async (req, res) => {
     const base = publicBase(req);
     const m3u = `${base}/playlist.m3u?token=${encodeURIComponent(token)}`;
     const rows = channels.map(c => `<tr><td>${esc(c.name)}</td><td><code>${esc(`${base}/play/${token}/${c.id}/index.mpd`)}</code></td></tr>`).join('');
-    res.send(page(`<div class=card><b class=ok>Uspesno.</b><p><b>Kanali: ${channels.length}</b></p><p>M3U fajl:<br><a href='${esc(m3u)}'>${esc(m3u)}</a></p><p>Ovaj link cuvaj privatno.</p></div><div class=card><h2>Kanali (${channels.length})</h2><table><tr><th>Kanal</th><th>Playable link</th></tr>${rows}</table></div>`));
+    res.send(page(`<div class=card><b class=ok>Uspesno.</b><p><b>Kanali: ${channels.length}</b></p><p>M3U fajl:<br><a href='${esc(m3u)}'>${esc(m3u)}</a></p></div><div class=card><h2>Kanali (${channels.length})</h2><table><tr><th>Kanal</th><th>Playable link</th></tr>${rows}</table></div>`));
   } catch (e) {
     console.log('MOVE login failed:', e.status || '', e.message);
     res.status(500).send(page(`<div class='card err'>MOVE greska: ${esc(e.message)}</div>`));
@@ -275,16 +421,6 @@ app.get('/playlist.m3u', async (req, res) => {
   }
 });
 
-app.get('/source/:id', async (req, res) => {
-  try {
-    const creds = dec(String(req.query.token || ''));
-    const src = await sourceFor(creds, req.params.id);
-    res.json({ success: true, liveId: Number(req.params.id), url: src.url, type: src.url.includes('.mpd') ? 'dash' : src.url.includes('.m3u8') ? 'hls' : 'unknown', drm: false });
-  } catch (e) {
-    res.status(502).json({ success: false, error: e.message });
-  }
-});
-
 function rewriteManifest(text, srcUrl, proxyBase) {
   const upstreamDir = new URL('.', srcUrl).toString();
   let out = text.split(upstreamDir).join(proxyBase);
@@ -292,12 +428,10 @@ function rewriteManifest(text, srcUrl, proxyBase) {
   out = out.replace(/<BaseURL>\s*([^<]+)\s*<\/BaseURL>/gi, (m, v) => {
     try {
       const abs = new URL(v.trim(), srcUrl);
-      if (abs.origin === srcOrigin) {
-        const baseDir = new URL('.', srcUrl);
-        if (abs.pathname.startsWith(baseDir.pathname)) {
-          const rel = abs.pathname.slice(baseDir.pathname.length) + abs.search;
-          return `<BaseURL>${proxyBase}${rel}</BaseURL>`;
-        }
+      const baseDir = new URL('.', srcUrl);
+      if (abs.origin === srcOrigin && abs.pathname.startsWith(baseDir.pathname)) {
+        const rel = abs.pathname.slice(baseDir.pathname.length) + abs.search;
+        return `<BaseURL>${proxyBase}${rel}</BaseURL>`;
       }
     } catch {}
     return m;
@@ -322,11 +456,9 @@ app.get('/play/:token/:id/index.mpd', async (req, res) => {
     }
     if (!r.ok) throw new Error(`MOVE manifest HTTP ${r.status}`);
     const text = await r.text();
-    const base = publicBase(req);
-    const proxyBase = `${base}/play/${token}/${id}/`;
+    const proxyBase = `${publicBase(req)}/play/${token}/${id}/`;
     const rewritten = rewriteManifest(text, src.url, proxyBase);
-    const ct = r.headers.get('content-type') || (src.url.includes('.m3u8') ? 'application/vnd.apple.mpegurl' : 'application/dash+xml');
-    res.set('content-type', ct);
+    res.set('content-type', r.headers.get('content-type') || 'application/dash+xml');
     res.set('cache-control', 'no-store');
     res.send(rewritten);
   } catch (e) {
@@ -372,4 +504,20 @@ app.get('/play/:token/:id/*rest', async (req, res) => {
 });
 
 app.get('/health', (_req, res) => res.json({ ok: true, service: 'nova-move-render', maxStreams: MAX_ACTIVE_STREAMS }));
-app.listen(PORT, '0.0.0.0', () => console.log(`NOVA MOVE listening on ${PORT}`));
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`NOVA MOVE listening on ${PORT}`);
+  if (DEBUG_ACCESS_TOKEN) {
+    setTimeout(async () => {
+      try {
+        const creds = dec(DEBUG_ACCESS_TOKEN);
+        const { data } = await liveAll(creds);
+        schemaSummary(data);
+        const rows = parseChannels(data);
+        console.log('MOVE_DEBUG_RESULT', JSON.stringify({ channels: rows.length }));
+      } catch (e) {
+        console.log('MOVE_DEBUG_ERROR', e.status || '', e.message);
+      }
+    }, 1200);
+  }
+});
