@@ -1,7 +1,6 @@
 import fs from 'node:fs';
-import os from 'node:os';
+import { pathToFileURL, fileURLToPath } from 'node:url';
 import path from 'node:path';
-import { pathToFileURL } from 'node:url';
 
 const sourcePath = new URL('./server-fixed.js', import.meta.url);
 let src = fs.readFileSync(sourcePath, 'utf8');
@@ -40,6 +39,6 @@ app.get('/session/:token', async (req,res) => {
 app.listen(PORT,'0.0.0.0',()=>console.log(\`NOVA MOVE v4 listening on \${PORT}\`));`;
 
 src = src.replace(needle, injection);
-const runtimePath = path.join(os.tmpdir(), 'nova-move-runtime.mjs');
+const runtimePath = path.join(path.dirname(fileURLToPath(import.meta.url)), '.nova-move-runtime.mjs');
 fs.writeFileSync(runtimePath, src, 'utf8');
 await import(pathToFileURL(runtimePath).href + `?v=${Date.now()}`);
