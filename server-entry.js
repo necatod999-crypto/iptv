@@ -6,6 +6,9 @@ import { pathToFileURL } from 'node:url';
 const sourcePath = new URL('./server-fixed.js', import.meta.url);
 let src = fs.readFileSync(sourcePath, 'utf8');
 
+// Keep the preferred Serbian channel order in freshly generated M3U files.
+src = src.replace("['pink','pink tv']", "['pink','pink tv','tv pink']");
+
 const needle = "app.listen(PORT,'0.0.0.0',()=>console.log(`NOVA MOVE v3 listening on ${PORT}`));";
 if (!src.includes(needle)) {
   throw new Error('server-fixed.js start marker not found');
