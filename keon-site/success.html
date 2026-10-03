@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#050507"><title>Payment successful — KEON</title>
+<link rel="stylesheet" href="styles.css"><link rel="icon" href="assets/keon-logo.svg">
+</head>
+<body class="success-body">
+<div class="noise"></div><div class="aurora a1"></div><div class="aurora a2"></div>
+<main class="success-shell">
+  <section class="success-card">
+    <div class="success-ring"><span>✓</span></div>
+    <img class="success-logo" src="assets/keon-logo.svg" alt="KEON">
+    <span class="kicker">PAYMENT COMPLETE</span>
+    <h1>Welcome to KEON.</h1>
+    <p id="statusText">Your checkout has returned successfully. Preparing the KEON app download…</p>
+    <div class="download-progress"><div id="progressBar"></div></div>
+    <div class="countdown">Download starts in <b id="countdown">3</b>s</div>
+    <a id="downloadBtn" class="btn btn-primary wide" href="#"><span>Download KEON APK now</span><b>↓</b></a>
+    <p class="install-note">When Android opens the installer, press <strong>Install</strong>. Android requires this confirmation for normal APK installs.</p>
+    <a class="back-link" href="index.html">← Back to KEON</a>
+  </section>
+</main>
+<script src="config.js"></script>
+<script>
+const cfg = window.KEON_CONFIG || {};
+const apk = cfg.APK_URL || '#';
+const btn = document.getElementById('downloadBtn');
+const status = document.getElementById('statusText');
+const countEl = document.getElementById('countdown');
+const bar = document.getElementById('progressBar');
+const params = new URLSearchParams(location.search);
+const hasCheckoutReference = params.has('session_id') || params.has('payment_id') || params.has('token');
+
+btn.href = apk;
+if (apk === '#') {
+  status.textContent = 'Payment returned successfully, but the KEON APK download URL has not been configured yet.';
+  countEl.parentElement.style.display = 'none';
+  bar.style.width = '100%';
+  btn.addEventListener('click', e => { e.preventDefault(); alert('APK link is not configured yet.'); });
+} else if (cfg.AUTO_DOWNLOAD_AFTER_PAYMENT && hasCheckoutReference) {
+  let n = 3;
+  bar.style.width = '20%';
+  const timer = setInterval(() => {
+    n--; countEl.textContent = Math.max(n,0);
+    bar.style.width = (20 + (3-n)*26) + '%';
+    if (n <= 0) {
+      clearInterval(timer); bar.style.width = '100%';
+      status.textContent = 'Download started. Approve the Android installation when prompted.';
+      const a=document.createElement('a'); a.href=apk; a.download='KEON.apk'; document.body.appendChild(a); a.click(); a.remove();
+    }
+  },1000);
+} else {
+  status.textContent = 'Your checkout has returned successfully. Tap below to download KEON.';
+  countEl.parentElement.style.display = 'none';
+  bar.style.width = '100%';
+}
+</script>
+</body></html>
