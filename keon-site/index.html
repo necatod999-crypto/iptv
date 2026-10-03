@@ -1,70 +1,119 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="theme-color" content="#050507" />
-  <meta name="description" content="KEON — premium IPTV app for Android TV and Android devices." />
-  <title>KEON — Premium IPTV</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" href="assets/keon-logo.svg" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#050507">
+  <meta name="description" content="KEON — a premium TV-first IPTV app experience for Android TV and Android devices.">
+  <title>KEON — Premium TV Experience</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="assets/keon-logo.svg">
 </head>
 <body>
-  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <div class="noise"></div>
+  <div class="aurora a1"></div><div class="aurora a2"></div><div class="aurora a3"></div>
   <header class="nav wrap">
-    <a class="brand" href="#top" aria-label="KEON home"><img src="assets/keon-logo.svg" alt="KEON" /></a>
-    <nav><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a class="nav-cta" href="#pricing">Get KEON</a></nav>
+    <a class="brand magnetic" href="#top"><img src="assets/keon-logo.svg" alt="KEON"></a>
+    <nav>
+      <a href="#experience">Experience</a><a href="#features">Features</a><a href="#pricing">Pricing</a>
+      <a class="nav-cta magnetic" href="#pricing">Get KEON</a>
+    </nav>
   </header>
+
   <main id="top">
     <section class="hero wrap">
       <div class="hero-copy reveal">
-        <div class="eyebrow"><span class="live-dot"></span> MADE FOR THE BIG SCREEN</div>
-        <h1>TV, redesigned.<br><span>Meet KEON.</span></h1>
-        <p class="lead">A fast, clean IPTV app experience built for Android TV and Android devices. Simple navigation, quick channel access, and a modern interface.</p>
-        <div class="hero-actions"><a class="btn btn-primary" href="#pricing">Get 1 year — €50</a><a class="btn btn-secondary" data-apk-link href="#">Download app</a></div>
-        <div class="trust-row"><span>Android TV</span><i></i><span>Android</span><i></i><span>12-month access</span></div>
+        <div class="eyebrow"><span class="pulse"></span> DESIGNED FOR ANDROID TV</div>
+        <h1>Your TV.<br><span class="grad-text">More alive.</span></h1>
+        <p class="lead">KEON combines a cinematic dark interface, fast remote navigation and a clean player into one simple TV-first experience.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary magnetic" href="#pricing"><span>Get KEON — €50/year</span><b>→</b></a>
+          <a class="btn btn-ghost magnetic" data-apk-link href="#"><span>Download app</span></a>
+        </div>
+        <div class="micro-row"><span>12 months access</span><i></i><span>Android TV</span><i></i><span>Android</span></div>
       </div>
-      <div class="hero-visual reveal delay-1" aria-hidden="true">
-        <div class="screen-shell"><div class="screen-glow"></div><div class="screen">
-          <div class="mini-top"><strong>KEON</strong><span>20:45</span></div>
-          <div class="channel-card active"><b>001</b><span>Live TV</span><em>LIVE</em></div>
-          <div class="channel-card"><b>002</b><span>Movies</span><em>HD</em></div>
-          <div class="channel-card"><b>003</b><span>Entertainment</span><em>FHD</em></div>
-          <div class="channel-card"><b>004</b><span>Sports</span><em>LIVE</em></div>
-          <div class="now-playing"><small>NOW PLAYING</small><strong>KEON LIVE</strong><span>1080p • 50 FPS</span></div>
-        </div></div>
+
+      <div class="tv-stage reveal delay-1">
+        <div class="halo"></div>
+        <div class="tv">
+          <div class="tv-bezel">
+            <div class="tv-ui">
+              <div class="tv-top"><span class="tiny-logo">KEON</span><span>20:45</span></div>
+              <div class="tv-content">
+                <aside>
+                  <div class="side-brand"></div>
+                  <button class="side-item active">LIVE</button>
+                  <button class="side-item">MOVIES</button>
+                  <button class="side-item">SPORT</button>
+                </aside>
+                <section class="channels">
+                  <div class="channel selected"><b>001</b><span>KEON Live</span><em>LIVE</em></div>
+                  <div class="channel"><b>002</b><span>Movies</span><em>FHD</em></div>
+                  <div class="channel"><b>003</b><span>Entertainment</span><em>HD</em></div>
+                  <div class="channel"><b>004</b><span>Sports</span><em>LIVE</em></div>
+                </section>
+              </div>
+              <div class="player-bar"><div><small>NOW PLAYING</small><strong>KEON LIVE</strong></div><div class="quality">1080p&nbsp;&nbsp;50 FPS</div></div>
+              <div class="scanline"></div>
+            </div>
+          </div>
+          <div class="tv-foot"></div>
+        </div>
+        <div class="float-chip chip1">FAST START</div><div class="float-chip chip2">TV REMOTE READY</div>
       </div>
     </section>
-    <section class="logo-strip wrap reveal"><p>One app. One simple annual plan.</p><div class="spectrum-line"></div></section>
+
+    <section class="ticker">
+      <div class="ticker-track">
+        <span>KEON</span><i>•</i><span>ANDROID TV</span><i>•</i><span>FAST NAVIGATION</span><i>•</i><span>MODERN PLAYER</span><i>•</i>
+        <span>KEON</span><i>•</i><span>ANDROID TV</span><i>•</i><span>FAST NAVIGATION</span><i>•</i><span>MODERN PLAYER</span><i>•</i>
+      </div>
+    </section>
+
+    <section id="experience" class="section wrap split">
+      <div class="section-heading reveal"><span class="kicker">THE EXPERIENCE</span><h2>Looks premium.<br>Feels instant.</h2></div>
+      <div class="statement reveal delay-1"><p>Built around the way a TV should work: big focus states, fast channel changes, minimal clutter and smooth motion that never gets in your way.</p><div class="spectrum"></div></div>
+    </section>
+
     <section id="features" class="section wrap">
-      <div class="section-heading reveal"><span class="kicker">WHY KEON</span><h2>Built to feel fast on your TV.</h2><p>Focused controls, a dark living-room interface, and the features you actually use.</p></div>
       <div class="feature-grid">
-        <article class="card reveal"><span class="icon">↯</span><h3>Fast startup</h3><p>Open the app and get to your content quickly without a cluttered home screen.</p></article>
-        <article class="card reveal delay-1"><span class="icon">▣</span><h3>TV-first controls</h3><p>Designed around a remote, with clear focus states and simple channel navigation.</p></article>
-        <article class="card reveal delay-2"><span class="icon">◉</span><h3>Clean playback</h3><p>A minimal player experience with channel information when you need it.</p></article>
-        <article class="card reveal"><span class="icon">⌁</span><h3>Modern interface</h3><p>Deep black surfaces, subtle transparency, and the signature KEON spectrum accent.</p></article>
-        <article class="card reveal delay-1"><span class="icon">✓</span><h3>Simple access</h3><p>One annual plan with straightforward activation and support.</p></article>
-        <article class="card reveal delay-2"><span class="icon">⬇</span><h3>Easy install</h3><p>Download the Android package and install it on your compatible device.</p></article>
+        <article class="glass-card reveal"><div class="card-index">01</div><div class="orb">↯</div><h3>Quick launch</h3><p>Get from app open to playback without digging through layers of menus.</p></article>
+        <article class="glass-card reveal delay-1"><div class="card-index">02</div><div class="orb">⌁</div><h3>TV-first controls</h3><p>Remote navigation with clear focus, predictable movement and readable layouts.</p></article>
+        <article class="glass-card reveal delay-2"><div class="card-index">03</div><div class="orb">◉</div><h3>Clean player</h3><p>Useful channel information appears when you need it, then gets out of the way.</p></article>
+        <article class="glass-card reveal"><div class="card-index">04</div><div class="orb">✦</div><h3>Modern motion</h3><p>Subtle fades, slides and depth effects give KEON a polished living-room feel.</p></article>
+        <article class="glass-card reveal delay-1"><div class="card-index">05</div><div class="orb">✓</div><h3>Simple annual plan</h3><p>One straightforward subscription for 12 months of app access.</p></article>
+        <article class="glass-card reveal delay-2"><div class="card-index">06</div><div class="orb">↓</div><h3>Fast install flow</h3><p>After checkout, the success page can automatically start the KEON APK download.</p></article>
       </div>
     </section>
-    <section id="pricing" class="section wrap pricing-section">
-      <div class="section-heading reveal"><span class="kicker">PRICING</span><h2>One plan. No confusion.</h2></div>
-      <div class="price-card reveal"><div class="price-glow"></div><span class="popular">KEON ANNUAL</span><div class="price"><sup>€</sup>50 <small>/ year</small></div><p>12 months of KEON access.</p>
-        <ul><li>✓ 12-month subscription</li><li>✓ Android TV & Android app</li><li>✓ App updates</li><li>✓ Activation support</li></ul>
-        <a class="btn btn-primary wide" data-payment-link href="#">Pay €50 securely</a><span class="payment-note">Secure checkout opens on your payment provider.</span>
+
+    <section id="pricing" class="section wrap pricing-wrap">
+      <div class="pricing-copy reveal"><span class="kicker">SIMPLE PRICING</span><h2>One year.<br>One price.</h2><p>No complicated tiers. Get KEON for 12 months with a single annual payment.</p></div>
+      <div class="price-card reveal delay-1">
+        <div class="price-shine"></div><div class="badge">ANNUAL ACCESS</div>
+        <div class="price"><sup>€</sup><strong>50</strong><small>/ year</small></div>
+        <div class="divider"></div>
+        <ul><li><span>✓</span> 12 months of KEON access</li><li><span>✓</span> Android TV & Android</li><li><span>✓</span> Future app updates</li><li><span>✓</span> Activation support</li></ul>
+        <a class="btn btn-primary wide magnetic" data-payment-link href="#"><span>Continue to secure checkout</span><b>→</b></a>
+        <small class="secure">Secure payment handled by your checkout provider.</small>
       </div>
     </section>
-    <section class="section wrap install-section"><div class="install-panel reveal"><div><span class="kicker">INSTALL KEON</span><h2>Ready for Android TV.</h2><p>Download the APK, install it on your device, and activate your access after purchase.</p></div><a class="btn btn-secondary" data-apk-link href="#">Download KEON APK</a></div></section>
-    <section id="faq" class="section wrap faq-section">
-      <div class="section-heading reveal"><span class="kicker">FAQ</span><h2>Common questions.</h2></div>
-      <div class="faq-list">
-        <details class="reveal"><summary>How much does KEON cost?</summary><p>The annual KEON plan is €50 for 12 months.</p></details>
-        <details class="reveal"><summary>Which devices are supported?</summary><p>KEON is intended for compatible Android TV and Android devices.</p></details>
-        <details class="reveal"><summary>How do I pay?</summary><p>Click the payment button and complete checkout through the configured payment provider.</p></details>
-        <details class="reveal"><summary>How do I install the app?</summary><p>Use the APK download button and install the package on your compatible Android device.</p></details>
+
+    <section class="section wrap install">
+      <div class="install-card reveal">
+        <div><span class="kicker">AFTER PAYMENT</span><h2>Pay. Download. Install.</h2><p>After a successful checkout, KEON can automatically open a confirmation page and begin downloading the APK. Android will then ask the customer to approve installation.</p></div>
+        <div class="steps"><span><b>1</b>Pay</span><i></i><span><b>2</b>Auto-download</span><i></i><span><b>3</b>Install</span></div>
       </div>
+    </section>
+
+    <section id="faq" class="section wrap faq">
+      <div class="section-heading reveal"><span class="kicker">FAQ</span><h2>Good to know.</h2></div>
+      <details class="reveal"><summary>Can KEON install itself after payment?</summary><p>The APK can start downloading automatically after checkout. Android still requires the customer to approve the app installation unless the device has special administrator/system permissions.</p></details>
+      <details class="reveal"><summary>Is payment active already?</summary><p>The site is prepared for a payment link. A real payment provider and secure payment verification still need to be connected before accepting customers.</p></details>
+      <details class="reveal"><summary>What happens after payment?</summary><p>The payment provider redirects the customer to the KEON success page. The page can then start the APK download automatically.</p></details>
     </section>
   </main>
-  <footer class="footer wrap"><div class="footer-brand"><img src="assets/keon-logo.svg" alt="KEON" /><p>Premium IPTV app experience.</p></div><div class="footer-links"><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a></div><p class="copyright">© <span id="year"></span> KEON. All rights reserved.</p></footer>
+
+  <footer class="footer wrap"><img src="assets/keon-logo.svg" alt="KEON"><div><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a></div><span>© <b id="year"></b> KEON</span></footer>
   <script src="config.js"></script><script src="script.js"></script>
-</body></html>
+</body>
+</html>
