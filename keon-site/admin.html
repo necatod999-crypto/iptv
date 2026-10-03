@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#050507"><title>KEON Admin</title>
+<link rel="stylesheet" href="styles.css"><link rel="icon" href="assets/keon-logo.svg">
+<style>
+.admin{max-width:720px;margin:auto;padding:24px}.login,.request{padding:18px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.045);border-radius:18px;margin:14px 0}.pin{width:100%;box-sizing:border-box;padding:15px;border-radius:14px;border:1px solid rgba(255,255,255,.15);background:#101014;color:white;font-size:20px;letter-spacing:.2em;text-align:center}.row{display:flex;gap:10px;margin-top:14px}.row .btn{flex:1;justify-content:center}.meta{opacity:.72;font-size:.88rem}.ref{font-weight:800;letter-spacing:.06em}.approve{background:#fff;color:#050507}.reject{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.18)}.empty{opacity:.65;padding:28px 0}
+</style>
+</head>
+<body>
+<div class="noise"></div><div class="aurora a1"></div><div class="aurora a2"></div>
+<main class="admin">
+<img src="assets/keon-logo.svg" alt="KEON" style="width:150px;margin:10px 0 24px">
+<span class="kicker">MOBILE ADMIN</span><h1>Payment approvals</h1>
+<div id="login" class="login">
+<p>Enter your admin PIN.</p>
+<input id="pin" class="pin" inputmode="numeric" maxlength="6" placeholder="••••••">
+<button id="loginBtn" class="btn btn-primary wide" style="margin-top:12px">Open approvals</button>
+</div>
+<div id="panel" style="display:none">
+<div id="list"></div>
+</div>
+</main>
+<script>
+const API='https://yahooacojmwfgscyahav.supabase.co/functions/v1/keon-payment-admin';
+let pin=sessionStorage.getItem('keon_admin_pin')||'';
+const list=document.getElementById('list');
+async function call(body){
+ const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...body,pin})});
+ const d=await r.json(); if(!r.ok) throw new Error(d.error||'Request failed'); return d;
+}
+function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+async function load(){
+ try{
+  const d=await call({action:'list'});
+  document.getElementById('login').style.display='none';document.getElementById('panel').style.display='block';
+  if(!d.items.length){list.innerHTML='<div class="empty">No pending payments.</div>';return;}
+  list.innerHTML=d.items.map(x=>`
+   <article class="request">
+    <div class="ref">${esc(x.reference)}</div>
+    <h3>${esc(x.customer_name)}</h3>
+    <div class="meta">${esc(x.customer_email||'No email')}<br>Status: ${esc(x.status)}<br>${new Date(x.created_at).toLocaleString()}</div>
+    <div class="row">
+      <button class="btn approve" onclick="approve('${esc(x.reference)}')">Approve</button>
+      <button class="btn reject" onclick="rejectPay('${esc(x.reference)}')">Reject</button>
+    </div>
+   </article>`).join('');
+ }catch(e){
+  sessionStorage.removeItem('keon_admin_pin');pin='';
+  document.getElementById('login').style.display='block';document.getElementById('panel').style.display='none';
+  alert(e.message);
+ }
+}
+async function approve(reference){if(!confirm('Approve '+reference+'?'))return;await call({action:'approve',reference});load();}
+async function rejectPay(reference){if(!confirm('Reject '+reference+'?'))return;await call({action:'reject',reference});load();}
+document.getElementById('loginBtn').onclick=()=>{pin=document.getElementById('pin').value.trim();sessionStorage.setItem('keon_admin_pin',pin);load();};
+if(pin)load();
+setInterval(()=>{if(pin)load()},10000);
+</script>
+</body>
+</html>
