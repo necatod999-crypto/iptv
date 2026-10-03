@@ -4,27 +4,99 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#050507"><title>Pay €50 — KEON</title>
 <link rel="stylesheet" href="styles.css"><link rel="icon" href="assets/keon-logo.svg">
+<style>
+.form{display:grid;gap:12px;margin:22px 0}.form input{width:100%;box-sizing:border-box;padding:14px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:#fff;font:inherit}.box{margin:24px 0;padding:20px;border:1px solid rgba(255,255,255,.12);border-radius:18px;background:rgba(255,255,255,.04);text-align:left}.ref{font-size:1.2rem;font-weight:800;letter-spacing:.08em;word-break:break-all}.hidden{display:none!important}.status-pill{display:inline-flex;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.07);margin:8px 0 14px}.hint{opacity:.72;font-size:.93rem}
+</style>
 </head>
 <body class="success-body">
 <div class="noise"></div><div class="aurora a1"></div><div class="aurora a2"></div>
 <main class="success-shell">
-  <section class="success-card" style="max-width:760px">
-    <img class="success-logo" src="assets/keon-logo.svg" alt="KEON">
-    <span class="kicker">EUR BANK TRANSFER</span>
-    <h1>Pay €50 for 12 months.</h1>
-    <p>Send exactly <strong>€50 EUR</strong> using your bank app. KEON access is activated after the payment is confirmed.</p>
+<section class="success-card" style="max-width:760px">
+<img class="success-logo" src="assets/keon-logo.svg" alt="KEON">
+<span class="kicker">EUR BANK TRANSFER</span>
+<h1>KEON — €50 / year</h1>
 
-    <div style="text-align:left;margin:28px 0;padding:22px;border:1px solid rgba(255,255,255,.12);border-radius:18px;background:rgba(255,255,255,.04)">
-      <p><strong>Recipient</strong><br>Veljko Todorovic</p>
-      <p><strong>Currency</strong><br>EUR</p>
-      <p><strong>Amount</strong><br>€50.00</p>
-      <p><strong>EUR account</strong><br><span style="font-size:1.12rem;word-break:break-all">325-9341706063760-23</span></p>
-      <p><strong>Payment purpose</strong><br>KEON 12 months</p>
-    </div>
+<div id="start">
+<p>Enter your name to create your payment reference.</p>
+<div class="form">
+<input id="name" maxlength="120" placeholder="Your name" autocomplete="name">
+<input id="email" maxlength="180" placeholder="Email (optional)" type="email" autocomplete="email">
+<button id="createBtn" class="btn btn-primary wide"><span>Create payment</span><b>→</b></button>
+</div>
+</div>
 
-    <p class="install-note">Do not send card number, PIN or CVV. This page uses bank transfer only. After payment is confirmed, a private KEON APK install link can be issued.</p>
-    <a class="btn btn-primary wide" href="index.html"><span>Back to KEON</span><b>←</b></a>
-  </section>
+<div id="payment" class="hidden">
+<div class="box">
+<p><strong>Recipient</strong><br>Veljko Todorovic</p>
+<p><strong>Currency</strong><br>EUR</p>
+<p><strong>Amount</strong><br>€50.00</p>
+<p><strong>EUR account</strong><br><span style="font-size:1.1rem;word-break:break-all">325-9341706063760-23</span></p>
+<p><strong>Payment purpose / reference</strong><br><span id="reference" class="ref"></span></p>
+</div>
+<p class="hint">Put the KEON reference above in the payment description so the payment can be matched.</p>
+<button id="paidBtn" class="btn btn-primary wide"><span>I PAID €50</span><b>✓</b></button>
+</div>
+
+<div id="waiting" class="hidden">
+<div class="status-pill">WAITING FOR APPROVAL</div>
+<h2>Payment submitted.</h2>
+<p>Keep this page open. As soon as your payment is approved, KEON will continue automatically to the private download.</p>
+<p class="hint">Reference: <strong id="waitRef"></strong></p>
+<div class="download-progress"><div id="progressBar" style="width:35%"></div></div>
+</div>
+
+<div id="rejected" class="hidden">
+<h2>Payment not approved.</h2>
+<p>Please check the transfer details and contact KEON support.</p>
+</div>
+
+<a class="back-link" href="index.html">← Back to KEON</a>
+</section>
 </main>
+<script>
+const API='https://yahooacojmwfgscyahav.supabase.co/functions/v1/keon-payment-request';
+let ref=localStorage.getItem('keon_payment_ref')||'';
+const $=id=>document.getElementById(id);
+
+async function call(body){
+  const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const d=await r.json(); if(!r.ok) throw new Error(d.error||'Request failed'); return d;
+}
+function show(id){['start','payment','waiting','rejected'].forEach(x=>$(x).classList.toggle('hidden',x!==id));}
+async function createPayment(){
+  const name=$('name').value.trim(); if(!name){$('name').focus();return;}
+  $('createBtn').disabled=true;
+  try{
+    const d=await call({action:'create',customer_name:name,customer_email:$('email').value.trim()});
+    ref=d.reference; localStorage.setItem('keon_payment_ref',ref);
+    $('reference').textContent=ref; show('payment');
+  }catch(e){alert(e.message);} finally{$('createBtn').disabled=false;}
+}
+async function submitPaid(){
+  $('paidBtn').disabled=true;
+  try{
+    await call({action:'submit',reference:ref});
+    $('waitRef').textContent=ref; show('waiting'); poll();
+  }catch(e){alert(e.message);$('paidBtn').disabled=false;}
+}
+async function poll(){
+  if(!ref)return;
+  try{
+    const d=await call({action:'status',reference:ref});
+    if(d.status==='approved'){
+      localStorage.removeItem('keon_payment_ref');
+      location.replace('success.html?payment_reference='+encodeURIComponent(ref));
+      return;
+    }
+    if(d.status==='rejected'){show('rejected');return;}
+    if(d.status==='submitted'){show('waiting');$('waitRef').textContent=ref;}
+    if(d.status==='pending'){$('reference').textContent=ref;show('payment');}
+  }catch(e){}
+  setTimeout(poll,5000);
+}
+$('createBtn').onclick=createPayment;
+$('paidBtn').onclick=submitPaid;
+if(ref){poll();}
+</script>
 </body>
 </html>
