@@ -13,47 +13,60 @@
     <img class="success-logo" src="assets/keon-logo.svg" alt="KEON">
     <span class="kicker">PAYMENT COMPLETE</span>
     <h1>Welcome to KEON.</h1>
-    <p id="statusText">Your checkout has returned successfully. Preparing the KEON app download…</p>
+    <p id="statusText">Verifying your payment and preparing a private install link…</p>
     <div class="download-progress"><div id="progressBar"></div></div>
-    <div class="countdown">Download starts in <b id="countdown">3</b>s</div>
-    <a id="downloadBtn" class="btn btn-primary wide" href="#"><span>Download KEON APK now</span><b>↓</b></a>
-    <p class="install-note">When Android opens the installer, press <strong>Install</strong>. Android requires this confirmation for normal APK installs.</p>
+    <div class="countdown" id="countWrap">Preparing secure download…</div>
+    <a id="downloadBtn" class="btn btn-primary wide" href="#" style="display:none"><span>Download KEON APK</span><b>↓</b></a>
+    <p class="install-note">The private download link expires quickly and can only be issued once for this payment. Android will still ask you to approve installation.</p>
     <a class="back-link" href="index.html">← Back to KEON</a>
   </section>
 </main>
-<script src="config.js"></script>
 <script>
-const cfg = window.KEON_CONFIG || {};
-const apk = cfg.APK_URL || '#';
-const btn = document.getElementById('downloadBtn');
-const status = document.getElementById('statusText');
-const countEl = document.getElementById('countdown');
-const bar = document.getElementById('progressBar');
-const params = new URLSearchParams(location.search);
-const hasCheckoutReference = params.has('session_id') || params.has('payment_id') || params.has('token');
+(async () => {
+  const status = document.getElementById('statusText');
+  const bar = document.getElementById('progressBar');
+  const btn = document.getElementById('downloadBtn');
+  const countWrap = document.getElementById('countWrap');
+  const params = new URLSearchParams(location.search);
+  const paymentRef = params.get('payment_reference');
 
-btn.href = apk;
-if (apk === '#') {
-  status.textContent = 'Payment returned successfully, but the KEON APK download URL has not been configured yet.';
-  countEl.parentElement.style.display = 'none';
-  bar.style.width = '100%';
-  btn.addEventListener('click', e => { e.preventDefault(); alert('APK link is not configured yet.'); });
-} else if (cfg.AUTO_DOWNLOAD_AFTER_PAYMENT && hasCheckoutReference) {
-  let n = 3;
-  bar.style.width = '20%';
-  const timer = setInterval(() => {
-    n--; countEl.textContent = Math.max(n,0);
-    bar.style.width = (20 + (3-n)*26) + '%';
-    if (n <= 0) {
-      clearInterval(timer); bar.style.width = '100%';
-      status.textContent = 'Download started. Approve the Android installation when prompted.';
-      const a=document.createElement('a'); a.href=apk; a.download='KEON.apk'; document.body.appendChild(a); a.click(); a.remove();
-    }
-  },1000);
-} else {
-  status.textContent = 'Your checkout has returned successfully. Tap below to download KEON.';
-  countEl.parentElement.style.display = 'none';
-  bar.style.width = '100%';
-}
+  if (!paymentRef) {
+    status.textContent = 'Payment reference is missing. Please return from the payment page.';
+    countWrap.textContent = '';
+    return;
+  }
+
+  try {
+    bar.style.width = '35%';
+    const res = await fetch('https://yahooacojmwfgscyahav.supabase.co/functions/v1/keon-download', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ payment_reference: paymentRef })
+    });
+
+    const data = await res.json();
+    if (!res.ok || !data.download_url) throw new Error(data.error || 'Install link unavailable');
+
+    bar.style.width = '100%';
+    status.textContent = 'Payment verified. Your private KEON download is ready.';
+    countWrap.textContent = 'Starting download automatically…';
+    btn.href = data.download_url;
+    btn.style.display = 'inline-flex';
+
+    const a = document.createElement('a');
+    a.href = data.download_url;
+    a.rel = 'noopener';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    setTimeout(() => { countWrap.textContent = 'If the download did not start, use the button above.'; }, 1500);
+  } catch (e) {
+    bar.style.width = '100%';
+    status.textContent = 'We could not verify this install request.';
+    countWrap.textContent = 'The payment may not be verified yet, or this one-time install link may already have been used.';
+  }
+})();
 </script>
-</body></html>
+</body>
+</html>
