@@ -1,5 +1,5 @@
 window.KEON_CONFIG = {
   PAYMENT_URL: "#",
-  APK_URL: "KEON_TV_ADRIA_V4.0.apk",
+  APK_URL: "#",
   AUTO_DOWNLOAD_AFTER_PAYMENT: true
 };
